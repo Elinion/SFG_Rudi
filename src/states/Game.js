@@ -20,11 +20,10 @@ export default class extends Phaser.State {
     this.rudiAwakingTime = 3000;
   }
 
-  preload () {
+  preload() {
     for (let i = 0; i < this.nbOfPlayers; i++) {
       this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}.png`, 40, 30)
     }
-    this.game.load.image('rudi', '../../assets/images/rudi.png');
   }
 
   create () {
