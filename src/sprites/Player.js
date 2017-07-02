@@ -67,7 +67,6 @@ export default class Player extends Phaser.Sprite {
   movePlayer() {
     if (this.stunTimer.running) {
       this.speed = 50;
-      this.game.physics.arcade.velocityFromAngle(this.angle, this.speed, this.body.velocity);
     } else {
       this.speed = 200;
     }
@@ -93,6 +92,7 @@ export default class Player extends Phaser.Sprite {
 
   stun() {
     this.stunTimer.start();
+    this.didInput = true;
   }
 
   updateScore() {
