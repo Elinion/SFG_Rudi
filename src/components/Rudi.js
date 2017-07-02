@@ -38,7 +38,7 @@ export default class Rudi {
     if (player.hasCarnet) {
       this._endGame()
     } else {
-      //player.stun()
+      player.stun()
     }
   }
 }

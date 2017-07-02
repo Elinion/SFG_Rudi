@@ -59,6 +59,7 @@ export default class extends Phaser.State {
   update () {
     this.players.map(player => {
       player.checkCarnet()
+      player.checkStun()
       player.movePlayer()
       player.updateScore()
     })
