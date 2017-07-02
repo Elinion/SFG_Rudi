@@ -71,12 +71,12 @@ export default class extends Phaser.State {
   }
 
   _onPlayersCollide (player1, player2) {
-    if (player1.hasCarnet && !player2.timer.running) {
-      player1.timer.start()
+    if (player1.hasCarnet && !player2.collisionTimer.running) {
+      player1.collisionTimer.start()
       player1.hasCarnet = false
       player2.hasCarnet = true
-    } else if (player2.hasCarnet && !player1.timer.running) {
-      player2.timer.start()
+    } else if (player2.hasCarnet && !player1.collisionTimer.running) {
+      player2.collisionTimer.start()
       player2.hasCarnet = false
       player1.hasCarnet = true
     }
