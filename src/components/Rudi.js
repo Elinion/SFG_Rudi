@@ -4,10 +4,11 @@ export default class Rudi {
     this.players = players
     this.game = game
     this.speed = 150
-    this.gameObject = game.add.sprite(100, 100, 'rudi')
+    this.gameObject = game.add.sprite(50, 50, 'rudi')
     this.gameObject.anchor.setTo(0.5, 0.5)
     this.gameObject.position.x = 400
     game.physics.enable(this.gameObject)
+    this.gameObject.body.setSize(10,10)
 
     this.chasePlayer = this.chasePlayer.bind(this)
     this.checkPlayerCollision = this.checkPlayerCollision.bind(this)
@@ -21,7 +22,7 @@ export default class Rudi {
     )
   };
 
-  checkPlayerCollision() {
+  checkPlayerCollision () {
     this.game.physics.arcade.overlap(
       this.gameObject,
       this.players,
@@ -29,9 +30,15 @@ export default class Rudi {
     )
   }
 
+  _endGame () {
+    this.game.state.start('GameOver')
+  }
+
   _onPlayerCollision (player) {
     if (player.hasCarnet) {
-      this.game.state.start('GameOver')
+      this._endGame()
+    } else {
+      //player.stun()
     }
   }
 }

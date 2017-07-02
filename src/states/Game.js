@@ -10,20 +10,22 @@ export default class extends Phaser.State {
     this._updateRudi = this._updateRudi.bind(this)
   }
 
-  init() {
-    this.players = [];
-    this.nbOfPlayers = 2;
-    this.playersInputs = ['LEFT', 'RIGHT'];
-    this.playersColors = ['#22b6d6', '#bf22d6'];
 
-    this.scores = [];
+  init () {
+    this.players = []
+    this.nbOfPlayers = 2
+    this.playersInputs = ['LEFT', 'RIGHT']
+    this.playersColors = ['#22b6d6', '#bf22d6']
+    this.scores = []
+    this.isRudiAwake = false
+    this.rudiAwakingTime = 3000;
   }
 
   preload () {
     for (let i = 0; i < this.nbOfPlayers; i++) {
       this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}.png`, 40, 30)
     }
-    this.game.load.image('rudi', '../../assets/images/rudi.png')
+    this.game.load.image('rudi', '../../assets/images/rudi.png');
   }
 
   create () {
@@ -46,24 +48,33 @@ export default class extends Phaser.State {
 
     this.players[game.rnd.integerInRange(0, this.players.length - 1)].hasCarnet = true
 
+    this._createRudi()
+  }
+
+  _createRudi() {
     this.rudi = new Rudi(this.game, this.players)
+    setTimeout(() => {
+      this.isRudiAwake = true;
+    }, this.rudiAwakingTime)
   }
 
   update () {
     this.players.map(player => {
-      player.checkCarnet();
-      player.movePlayer();
-      player.updateScore();
-    });
+      player.checkCarnet()
+      player.movePlayer()
+      player.updateScore()
+    })
 
-    this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide);
+    this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide)
     this._updateRudi()
   }
 
   _updateRudi () {
-    const playerToChase = this._getPlayerWithCarnet()
-    this.rudi.chasePlayer(playerToChase)
-    this.rudi.checkPlayerCollision()
+    if(this.isRudiAwake) {
+      const playerToChase = this._getPlayerWithCarnet()
+      this.rudi.chasePlayer(playerToChase)
+      this.rudi.checkPlayerCollision()
+    }
   }
 
   _getPlayerWithCarnet () {

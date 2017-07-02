@@ -8,12 +8,11 @@ export default class Player extends Phaser.Sprite {
     this.textColor = color
     this.textPosition = pos
 
+    this.collisionTimer = null
+    this.collisionTimerDuration = 3000
     this.defaultAngle = 200
     this.didInput = false;
     this.hasCarnet = false;
-    this.isStunned = false;
-    this.collisionTimer = null
-    this.collisionTimerDuration = 3000
     this.score = 0
     this.speed = 200
     this.stunTimer = null
@@ -35,7 +34,7 @@ export default class Player extends Phaser.Sprite {
     this.body.collideWorldBounds = true;
     this.body.bounce.set(1);
 
-    // Manage collisions timer
+    // Manage timers
     this._createTimer('collisionTimer', this.collisionTimerDuration);
     this._createTimer('stunTimer', this.stunTimerDuration);
 
