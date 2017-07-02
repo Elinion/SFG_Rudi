@@ -1,19 +1,23 @@
 export default class Player extends Phaser.Sprite {
-  constructor ({ game, x, y, asset, input }) {
+  constructor ({ game, x, y, asset, input, color, pos }) {
     super(game, x, y, asset)
     this.anchor.setTo(0.5)
 
     this.game = game
+    this.playerInput = input
+    this.textColor = color
+    this.textPosition = pos
+
     this.speed = 200
     this.defaultAngle = 200
     this.lockedTimer = 3000
-
-    this.playerInput = input
+    this.score = 0
     this.didInput = false;
     this.hasCarnet = false;
 
     this.checkCarnet = this.checkCarnet.bind(this);
     this.movePlayer = this.movePlayer.bind(this);
+    this.updateScore = this.updateScore.bind(this);
   }
 
   onInit() {
@@ -30,6 +34,9 @@ export default class Player extends Phaser.Sprite {
     // Manage collisions timer
     this.timer = this.game.time.create();
     this.timer.add(this.lockedTimer, this._endTimer, this, this);
+
+    this.scoreText = this.game.add.text(10, this.textPosition, `Score: ${this.score}`,
+      { fontSize: '15px', fill: this.textColor });
   }
 
 
@@ -58,6 +65,13 @@ export default class Player extends Phaser.Sprite {
       } else if (this.body.blocked.right || this.body.blocked.left) {
         this.body.rotation = 180 - this.body.rotation;
       }
+    }
+  }
+
+  updateScore() {
+    if (this.hasCarnet) {
+      this.score ++;
+      this.scoreText.text = `Score: ${this.score}`;
     }
   }
 
