@@ -8,7 +8,7 @@ export default class Player extends Phaser.Sprite {
     this.defaultAngle = 200
     this.lockedTimer = 3000
 
-    this.input = input
+    this.playerInput = input
     this.didInput = false;
     this.hasCarnet = false;
 
@@ -42,7 +42,7 @@ export default class Player extends Phaser.Sprite {
   }
 
   movePlayer() {
-    if (this.game.input.keyboard.isDown(Phaser.Keyboard[this.input])) {
+    if (this.game.input.keyboard.isDown(Phaser.Keyboard[this.playerInput])) {
       this.body.angularVelocity = -this.defaultAngle;
       this.didInput = true;
     } else {

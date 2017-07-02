@@ -31,8 +31,7 @@ export default class Rudi {
 
   _onPlayerCollision (player) {
     if (player.hasCarnet) {
-      console.log('restart scene')
-      //this.game.state.start('Game')
+      this.game.state.start('GameOver')
     }
   }
 }
