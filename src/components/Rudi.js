@@ -29,9 +29,19 @@ export default class Rudi {
     )
   }
 
+  _endGame() {
+    this.game.state.start('GameOver')
+  }
+
   _onPlayerCollision (player) {
     if (player.hasCarnet) {
-      this.game.state.start('GameOver')
+      this._endGame()
+    } else {
+      this._stunPlayer(player)
     }
+  }
+
+  _stunPlayer(player) {
+
   }
 }
