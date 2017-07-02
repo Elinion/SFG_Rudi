@@ -6,15 +6,17 @@ export default class extends Phaser.State {
 
   constructor () {
     super()
+    this._movePlayer = this._movePlayer.bind(this)
+    this._endTimer = this._endTimer.bind(this)
+    this._updateRudi = this._updateRudi.bind(this)
+  }
+
+  init() {
     this.players = []
     this.angle = 200
     this.lockedTimer = 3000
     this.nbOfPlayers = 2
     this.playersInputs = ['LEFT', 'RIGHT']
-
-    this._movePlayer = this._movePlayer.bind(this)
-    this._endTimer = this._endTimer.bind(this)
-    this._updateRudi = this._updateRudi.bind(this)
   }
 
   preload () {
@@ -50,7 +52,7 @@ export default class extends Phaser.State {
 
     this.players[0].hasCarnet = true
 
-    this.rudi = new Rudi(this.game)
+    this.rudi = new Rudi(this.game, this.players)
   }
 
   update () {
@@ -67,6 +69,7 @@ export default class extends Phaser.State {
   _updateRudi () {
     const playerToChase = this._getPlayerWithCarnet()
     this.rudi.chasePlayer(playerToChase)
+    this.rudi.checkPlayerCollision()
   }
 
   _getPlayerWithCarnet () {
