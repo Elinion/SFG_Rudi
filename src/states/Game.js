@@ -6,20 +6,25 @@ import Player from '../sprites/Player'
 export default class extends Phaser.State {
 
   constructor () {
-    super();
+    super()
+    this._updateRudi = this._updateRudi.bind(this)
+  }
+
+  init() {
+    
     this.players = [];
     this.nbOfPlayers = 2;
     this.playersInputs = ['LEFT', 'RIGHT'];
   }
 
-  preload() {
+  preload () {
     for (let i = 0; i < this.nbOfPlayers; i++) {
-      this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}.png`, 40, 30);
+      this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}.png`, 40, 30)
     }
   }
 
-  create() {
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+  create () {
+    this.game.physics.startSystem(Phaser.Physics.ARCADE)
 
     for (let i = 0; i < this.nbOfPlayers; i++) {
       this.players[i] = new Player({
@@ -34,27 +39,40 @@ export default class extends Phaser.State {
       this.game.add.existing(this.players[i])
     }
 
-    this.players[0].hasCarnet = true;
+    this.players[0].hasCarnet = true
+
+    this.rudi = new Rudi(this.game, this.players)
   }
 
-  update() {
+  update () {
     this.players.map(player => {
       player.checkCarnet();
       player.movePlayer();
     });
 
     this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide);
+    this._updateRudi()
   }
 
-  _onPlayersCollide(player1, player2) {
+  _updateRudi () {
+    const playerToChase = this._getPlayerWithCarnet()
+    this.rudi.chasePlayer(playerToChase)
+    this.rudi.checkPlayerCollision()
+  }
+
+  _getPlayerWithCarnet () {
+    return this.players.find(player => player.hasCarnet)
+  }
+
+  _onPlayersCollide (player1, player2) {
     if (player1.hasCarnet && !player2.timer.running) {
-      player1.timer.start();
-      player1.hasCarnet = false;
-      player2.hasCarnet = true;
+      player1.timer.start()
+      player1.hasCarnet = false
+      player2.hasCarnet = true
     } else if (player2.hasCarnet && !player1.timer.running) {
-      player2.timer.start();
-      player2.hasCarnet = false;
-      player1.hasCarnet = true;
+      player2.timer.start()
+      player2.hasCarnet = false
+      player1.hasCarnet = true
     }
   }
 }
