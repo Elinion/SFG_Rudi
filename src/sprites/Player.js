@@ -8,12 +8,15 @@ export default class Player extends Phaser.Sprite {
     this.textColor = color
     this.textPosition = pos
 
-    this.speed = 200
+    this.collisionTimer = null
+    this.collisionTimerDuration = 3000
     this.defaultAngle = 200
-    this.lockedTimer = 3000
-    this.score = 0
     this.didInput = false;
     this.hasCarnet = false;
+    this.score = 0
+    this.speed = 200
+    this.stunTimer = null
+    this.stunTimerDuration = 3000
 
     this.checkCarnet = this.checkCarnet.bind(this);
     this.movePlayer = this.movePlayer.bind(this);
@@ -31,9 +34,9 @@ export default class Player extends Phaser.Sprite {
     this.body.collideWorldBounds = true;
     this.body.bounce.set(1);
 
-    // Manage collisions timer
-    this.timer = this.game.time.create();
-    this.timer.add(this.lockedTimer, this._endTimer, this, this);
+    // Manage timers
+    this._createTimer('collisionTimer', this.collisionTimerDuration);
+    this._createTimer('stunTimer', this.stunTimerDuration);
 
     this.scoreText = this.game.add.text(10, this.textPosition, `Score: ${this.score}`,
       { fontSize: '15px', fill: this.textColor });
@@ -49,23 +52,30 @@ export default class Player extends Phaser.Sprite {
   }
 
   movePlayer() {
-    if (this.game.input.keyboard.isDown(Phaser.Keyboard[this.playerInput])) {
-      this.body.angularVelocity = -this.defaultAngle;
-      this.didInput = true;
-    } else {
-      if (this.didInput) {
-        this.body.angularVelocity = 0;
-        this.game.physics.arcade.velocityFromAngle(this.angle, 200, this.body.velocity);
-        this.didInput = false;
-      }
+    if (!this.stunTimer.running) {
+      if (this.game.input.keyboard.isDown(Phaser.Keyboard[this.playerInput])) {
+        this.body.angularVelocity = -this.defaultAngle;
+        this.didInput = true;
+      } else {
+        if (this.didInput) {
+          this.body.angularVelocity = 0;
+          this.game.physics.arcade.velocityFromAngle(this.angle, 200, this.body.velocity);
+          this.didInput = false;
+        }
 
-      if (this.body.blocked.up || this.body.blocked.down) {
-        let collisionAngle = this.body.rotation - 90;
-        this.body.rotation = 270 - collisionAngle;
-      } else if (this.body.blocked.right || this.body.blocked.left) {
-        this.body.rotation = 180 - this.body.rotation;
+        if (this.body.blocked.up || this.body.blocked.down) {
+          let collisionAngle = this.body.rotation - 90;
+          this.body.rotation = 270 - collisionAngle;
+        } else if (this.body.blocked.right || this.body.blocked.left) {
+          this.body.rotation = 180 - this.body.rotation;
+        }
       }
     }
+  }
+
+  stun() {
+    this.stunTimer.start();
+    this.frame = 2;
   }
 
   updateScore() {
@@ -75,11 +85,14 @@ export default class Player extends Phaser.Sprite {
     }
   }
 
-  _endTimer(player) {
-    player.timer.destroy();
+  _createTimer(timer, duration) {
+    this[timer] = this.game.time.create();
+    this[timer].add(duration, this._endTimer, this, timer, duration);
+  }
 
-    // Manage collisions timer
-    player.timer = this.game.time.create();
-    player.timer.add(this.lockedTimer, this._endTimer, this, player);
+  _endTimer(timer, duration) {
+    this[timer].destroy();
+
+    this._createTimer(timer, duration);
   }
 }
