@@ -6,28 +6,31 @@ export default class GameOver extends Phaser.State {
     super()
   }
 
-  preload() {
+  preload () {
     this.game.load.image('tryAgain', '../../assets/images/tryAgain.png')
   }
 
-  create() {
-    const style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-    this.text = this.game.add.text(0, 0, "Game Over", style);
-    this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
-    this.text.setTextBounds(0, 100, 800, 100);
-
+  create () {
+    this._createGameOverLabel()
     this._createButtons()
   }
 
-  _createButtons() {
+  _createButtons () {
     let {game} = this
-    this.group = game.add.group();
-    const onMenuClicked = () => this._goToMenu()
-    this.menuButton = game.make.button(game.world.centerX - 95, 200, 'tryAgain', onMenuClicked, this, 2, 1, 0);
-    this.group.add(this.menuButton);
+    this.group = game.add.group()
+    const onTryAgainClick = () => this._reloadGame()
+    this.tryAgainButton = game.make.button(game.world.centerX - 95, 200, 'tryAgain', onTryAgainClick, this, 2, 1, 0)
+    this.group.add(this.tryAgainButton)
   }
 
-  _goToMenu() {
-    console.log('menu')
+  _createGameOverLabel () {
+    const style = {font: 'bold 32px Arial', fill: '#fff', boundsAlignH: 'center', boundsAlignV: 'middle'}
+    this.text = this.game.add.text(0, 0, 'Game Over', style)
+    this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
+    this.text.setTextBounds(0, 100, 800, 100)
+  }
+
+  _reloadGame () {
+    this.game.state.start('Game')
   }
 }
