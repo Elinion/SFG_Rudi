@@ -16,11 +16,11 @@ export default class extends Phaser.State {
     this.playersInputs = ['LEFT', 'RIGHT']
     this.playersColors = ['#22b6d6', '#bf22d6']
     this.scores = []
-    this.isRudiAwake = false
-    this.rudiAwakingTime = 3;
+    this.rudiSpeed = 150
+    this.rudiAwakingTime = 3
   }
 
-  preload() {
+  preload () {
     for (let i = 0; i < this.nbOfPlayers; i++) {
       this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}.png`, 40, 30)
     }
@@ -37,9 +37,9 @@ export default class extends Phaser.State {
         asset: `player${i}`,
         input: this.playersInputs[i],
         color: this.playersColors[i],
-        pos: i * 15
-      });
-      this.players[i].onInit();
+        pos: i * 15,
+      })
+      this.players[i].onInit()
 
       this.game.add.existing(this.players[i])
     }
@@ -49,17 +49,17 @@ export default class extends Phaser.State {
     this._createRudi()
   }
 
-  _createRudi() {
-    const posX = this.world.centerX;
-    const posY = this.world.centerY;
+  _createRudi () {
+    const posX = this.world.centerX
+    const posY = this.world.centerY
     this.rudi = new Rudi(this.game, posX, posY, 'rudi', this.players)
-    this.game.add.existing(this.rudi);
+    this.game.add.existing(this.rudi)
     this._awakeRudiAfterTime(this.rudiAwakingTime)
   }
 
-  _awakeRudiAfterTime(seconds) {
+  _awakeRudiAfterTime (seconds) {
     setTimeout(() => {
-      this.isRudiAwake = true;
+      this.rudi.speed = this.rudiSpeed
     }, seconds * 1000)
   }
 
@@ -76,11 +76,9 @@ export default class extends Phaser.State {
   }
 
   _updateRudi () {
-    if(this.isRudiAwake) {
       const playerToChase = this._getPlayerWithCarnet()
       this.rudi.chasePlayer(playerToChase)
       this.rudi.checkPlayerCollision()
-    }
   }
 
   _getPlayerWithCarnet () {

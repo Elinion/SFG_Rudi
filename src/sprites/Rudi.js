@@ -6,7 +6,7 @@ export default class Rudi extends Phaser.Sprite {
     super(game, x, y, asset)
     this.players = players
     this.game = game
-    this.speed = 150
+    this.speed = 0
     this.anchor.setTo(0.5, 0.5)
     this.game.physics.enable(this);
     this.body.setSize(10, 10)
@@ -21,6 +21,9 @@ export default class Rudi extends Phaser.Sprite {
       player,
       this.speed,
     )
+    const angleInRadians = this.game.physics.arcade.angleBetween(this, player)
+    const angleInDegrees = angleInRadians * 180 / Math.PI
+    this.body.rotation = angleInDegrees
   };
 
   checkPlayerCollision () {
