@@ -1,6 +1,6 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
-import Rudi from '../components/Rudi'
+import Rudi from '../sprites/Rudi'
 import Player from '../sprites/Player'
 
 export default class extends Phaser.State {
@@ -17,7 +17,7 @@ export default class extends Phaser.State {
     this.playersColors = ['#22b6d6', '#bf22d6']
     this.scores = []
     this.isRudiAwake = false
-    this.rudiAwakingTime = 3000;
+    this.rudiAwakingTime = 3;
   }
 
   preload() {
@@ -50,10 +50,17 @@ export default class extends Phaser.State {
   }
 
   _createRudi() {
-    this.rudi = new Rudi(this.game, this.players)
+    const posX = this.world.centerX;
+    const posY = this.world.centerY;
+    this.rudi = new Rudi(this.game, posX, posY, 'rudi', this.players)
+    this.game.add.existing(this.rudi);
+    this._awakeRudiAfterTime(this.rudiAwakingTime)
+  }
+
+  _awakeRudiAfterTime(seconds) {
     setTimeout(() => {
       this.isRudiAwake = true;
-    }, this.rudiAwakingTime)
+    }, seconds * 1000)
   }
 
   update () {

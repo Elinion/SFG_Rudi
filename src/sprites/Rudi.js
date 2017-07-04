@@ -1,14 +1,15 @@
-export default class Rudi {
+import Phaser from 'phaser'
 
-  constructor (game, players) {
+export default class Rudi extends Phaser.Sprite {
+
+  constructor (game, x, y, asset, players) {
+    super(game, x, y, asset)
     this.players = players
     this.game = game
     this.speed = 150
-    this.gameObject = game.add.sprite(50, 50, 'rudi')
-    this.gameObject.anchor.setTo(0.5, 0.5)
-    this.gameObject.position.x = 400
-    game.physics.enable(this.gameObject)
-    this.gameObject.body.setSize(10,10)
+    this.anchor.setTo(0.5, 0.5)
+    this.game.physics.enable(this);
+    this.body.setSize(10, 10)
 
     this.chasePlayer = this.chasePlayer.bind(this)
     this.checkPlayerCollision = this.checkPlayerCollision.bind(this)
@@ -16,7 +17,7 @@ export default class Rudi {
 
   chasePlayer (player) {
     this.game.physics.arcade.moveToObject(
-      this.gameObject,
+      this,
       player,
       this.speed,
     )
@@ -24,7 +25,7 @@ export default class Rudi {
 
   checkPlayerCollision () {
     this.game.physics.arcade.overlap(
-      this.gameObject,
+      this,
       this.players,
       (rudi, player) => this._onPlayerCollision(player),
     )
