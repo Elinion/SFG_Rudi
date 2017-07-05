@@ -12,21 +12,28 @@ export default class Menu extends Phaser.State {
   }
 
   _createButtons () {
-    let {game} = this
-    this.group = game.add.group()
-    const onPlay = () => this._startGame()
-    this.playButton = game.make.button(game.world.centerX - 95, 300, 'playButton', onPlay, this, 2, 1, 0)
+    this.group = this.game.add.group()
+    this._createPlayButton()
     this.group.add(this.playButton)
+    this.group.position.set(this.game.world.centerX, this.game.world.centerY)
+  }
+
+  _createPlayButton() {
+    const onPlay = () => this._startGame()
+    this.playButton = this.game.make.button(0, 0, 'tryAgain', onPlay, this)
+    this.playButton.anchor.setTo(0.5)
   }
 
   _createTitle () {
     const style = {font: 'bold 32px Arial', fill: '#fff', boundsAlignH: 'center', boundsAlignV: 'middle'}
-    this.text = this.game.add.text(0, 0, 'R.U.D.I', style)
+    const posX = this.game.world.centerX
+    const posY = this.game.world.height * 0.3
+    this.text = this.game.add.text(posX, posY, 'R.U.D.I', style)
+    this.text.anchor.setTo(0.5)
     this.text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
-    this.text.setTextBounds(0, 100, 800, 100)
   }
 
-  _startGame() {
-    this.game.state.start('Game');
+  _startGame () {
+    this.game.state.start('Game')
   }
 }
