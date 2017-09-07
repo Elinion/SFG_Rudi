@@ -31,7 +31,7 @@ export default class extends Phaser.State {
 
     for (let i = 0; i < this.nbOfPlayers; i++) {
       this.players[i] = new Player({
-        game: this,
+        game: this.game,
         x: (i + 1) * 100,
         y: (i + 1) * 100,
         asset: `player${i}`,
@@ -44,7 +44,7 @@ export default class extends Phaser.State {
       this.game.add.existing(this.players[i])
     }
 
-    this.players[game.rnd.integerInRange(0, this.players.length - 1)].hasCarnet = true
+    this.players[this.game.rnd.integerInRange(0, this.players.length - 1)].hasCarnet = true
 
     this._createRudi()
   }
