@@ -1,11 +1,6 @@
 import Phaser from 'phaser'
 
 export default class Menu extends Phaser.State {
-
-  constructor () {
-    super()
-  }
-
   create () {
     this._createTitle()
     this._createButtons()
@@ -18,9 +13,9 @@ export default class Menu extends Phaser.State {
     this.group.position.set(this.game.world.centerX, this.game.world.centerY)
   }
 
-  _createPlayButton() {
+  _createPlayButton () {
     const onPlay = () => this._startGame()
-    this.playButton = this.game.make.button(0, 0, 'tryAgain', onPlay, this)
+    this.playButton = this.game.make.button(0, 0, 'playButton', onPlay, this)
     this.playButton.anchor.setTo(0.5)
   }
 

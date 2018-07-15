@@ -18,6 +18,8 @@ export default class extends Phaser.State {
     this.scores = []
     this.rudiSpeed = 150
     this.rudiAwakingTime = 3
+
+	this.onPause = false
   }
 
   preload () {
@@ -64,15 +66,17 @@ export default class extends Phaser.State {
   }
 
   update () {
-    this.players.map(player => {
-      player.checkCarnet()
-      player.checkStun()
-      player.movePlayer()
-      player.updateScore()
-    })
+	if (!this.onPause) {
+	this.players.map(player => {
+		player.checkCarnet()
+		player.checkStun()
+		player.movePlayer()
+		player.updateScore()
+	})
 
-    this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide)
-    this._updateRudi()
+	this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide)
+	this._updateRudi()
+	}
   }
 
   _updateRudi () {

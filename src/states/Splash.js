@@ -15,7 +15,7 @@ export default class extends Phaser.State {
     //
     this.game.load.image('tryAgain', '../../assets/images/tryAgain.png')
     this.game.load.image('rudi', '../../assets/images/rudi.png');
-    this.game.load.image('playButton', '../../assets/images/tryAgain.png');
+    this.game.load.image('playButton', '../../assets/images/playButton.png');
   }
 
   create () {

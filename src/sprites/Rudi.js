@@ -1,7 +1,6 @@
 import Phaser from 'phaser'
 
 export default class Rudi extends Phaser.Sprite {
-
   constructor (game, x, y, asset, players) {
     super(game, x, y, asset)
     this.players = players
