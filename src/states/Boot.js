@@ -25,6 +25,7 @@ export default class extends Phaser.State {
     this.load.spritesheet('deco2', './assets/images/deco2.png', 309, 291, 16)
     this.load.spritesheet('deco3', './assets/images/deco3.png', 102, 95, 6)
     this.load.spritesheet('deco4', './assets/images/deco4.png', 500, 500, 6)
+    this.load.spritesheet('deco5', './assets/images/deco5.png', 500, 500, 20)
 
     this.load.image('bg', './assets/images/paperBg.jpg')
     this.load.image('loaderBg', './assets/images/loader-bg.png')

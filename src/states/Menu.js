@@ -9,7 +9,8 @@ export default class Menu extends Phaser.State {
       { key: 'deco1', percentx: 0.1, percenty: 0.44, scale: 0.5, random: true },
       { key: 'deco2', percentx: 0.8, percenty: 0.15, scale: 1, random: false },
       { key: 'deco3', percentx: 0.1, percenty: 0.2, scale: 1, random: true },
-      { key: 'deco4', percentx: 0.8, percenty: 0.7, scale: 0.4, random: true }
+      { key: 'deco4', percentx: 0.8, percenty: 0.7, scale: 0.4, random: true },
+      { key: 'deco5', percentx: 0.25, percenty: 0, scale: 0.5, random: false }
     ]
   }
 
