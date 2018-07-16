@@ -2,79 +2,94 @@ import Phaser from 'phaser'
 
 export default class Menu extends Phaser.State {
   init () {
-    this.animMaxDuration = 500
-    this.animMinDuration = 100
+    this.animDuration = 80
     this.animationEasing = Phaser.Easing.Circular.InOut
+
+    this.decorationsData = [
+      { key: 'deco1', percentx: 0.1, percenty: 0.44, scale: 0.5, random: true },
+      { key: 'deco2', percentx: 0.8, percenty: 0.15, scale: 1, random: false },
+      { key: 'deco3', percentx: 0.1, percenty: 0.2, scale: 1, random: true },
+      { key: 'deco4', percentx: 0.8, percenty: 0.7, scale: 0.4, random: true }
+    ]
   }
 
   create () {
+    this._createBg()
     this._createTitle()
     this._createButtons()
+    this._createDeco()
+
+    this.timer = this.game.time.create(false)
+    this.timer.loop(this.animDuration, this._updateImagesRandom, this, [
+      { image: this.title, frames: 6 },
+      { image: this.playButton, frames: 4 },
+      { image: this.decorationsItems[0], frames: 6 },
+      { image: this.decorationsItems[2], frames: 6 },
+      { image: this.decorationsItems[3], frames: 6 }
+    ])
+    this.timer.start()
   }
 
-  update () {
-    this._updateTitle()
+  _createBg () {
+    this.game.add.tileSprite(0, 0, this.game.world.width, this.game.world.height, 'bg')
   }
 
   _createButtons () {
     this.buttonGroup = this.game.add.group()
     this._createPlayButton()
     this.buttonGroup.add(this.playButton)
-    this.buttonGroup.position.set(this.game.world.centerX, this.game.world.centerY)
+    this.buttonGroup.position.set(this.game.world.centerX, this.game.world.centerY * 1.35)
+    this.buttonGroup.pivot.setTo(0.5)
   }
 
   _createPlayButton () {
     const onPlay = () => this._startGame()
-    this.playButton = this.game.make.button(0, 0, 'playButton', onPlay, this)
+    this.playButton = this.game.make.button(0, 0, 'playBtn', onPlay, this)
+    this.playButton.animations.add('wiggle')
+
+    const scale = (this.game.world.width / 3) / this.playButton.width
+    this.playButton.scale.setTo(scale)
+
     this.playButton.anchor.setTo(0.5)
   }
 
   _createTitle () {
-    const style = {font: 'Love Ya Like A Sister', fontSize: 150, fill: '#000', boundsAlignH: 'right', boundsAlignV: 'middle'}
-
     const posX = this.game.world.centerX
-    const posY = this.game.world.height * 0.35
+    const posY = this.game.world.height * 0.25
 
-    this.titleGroup = this.game.add.group()
+    this.title = this.game.add.sprite(posX, posY, 'title')
+    this.title.anchor.setTo(0.5)
 
-    let startPosition = 0
+    const scale = (this.game.world.width / 4) / this.title.width
+    this.title.scale.setTo(scale)
 
-    String('Rudi !').split('').map((letter, i) => {
-      const letterText = this.game.add.text(startPosition, 0, letter, style)
-
-      letterText.isAnimOver = true
-
-      startPosition += letterText.width / 2
-      letterText.anchor.setTo(0.5, 0.5)
-      letterText.position.setTo(startPosition, 0)
-
-      this.titleGroup.add(letterText)
-      startPosition += letterText.width / 2
-    });
-
-    this.titleGroup.pivot.x = (this.titleGroup.width / 2)
-    this.titleGroup.position.setTo(posX, posY)
+    this.title.animations.add('wiggle')
   }
 
-  _updateTitle () {
-    this.titleGroup.children.map(letterText => {
-      if (letterText.isAnimOver) {
-        const animDuration = this.game.rnd.integerInRange(this.animMinDuration, this.animMaxDuration)
-        const scaleGoal = this.game.rnd.realInRange(-0.1, 0.1)
+  _createDeco () {
+    this.decorationsItems = this.decorationsData.map((element, index) => {
+      const sprite = this.game.add.sprite(this.game.world.width * element.percentx, this.game.world.height * element.percenty, element.key)
+      sprite.scale.setTo(element.scale)
+      const anim = sprite.animations.add('wiggle')
 
-        const angleTween = this.game.add.tween(letterText).to({
-          angle: this.game.rnd.integerInRange(-5, 5)
-        }, animDuration, this.animationEasing, true)
-
-        angleTween.onStart.add(() => { letterText.isAnimOver = false })
-        angleTween.onComplete.add(() => { letterText.isAnimOver = true })
-
-        this.game.add.tween(letterText.scale).to({
-          x: 1 + scaleGoal,
-          y: 1 + scaleGoal
-        }, animDuration, this.animationEasing, true)
+      if (!element.random) {
+        anim.play(1 / (this.animDuration / 1000), true)
       }
+
+      return sprite
     })
+  }
+
+  _updateImagesRandom (arr) {
+    arr.map(element => {
+      let rndFrame = this.game.rnd.integerInRange(0, element.frames)
+
+      while (element.image.frame === rndFrame) {
+        rndFrame = this.game.rnd.integerInRange(0, element.frames)
+      }
+
+      element.image.frame = rndFrame
+    });
   }
 
   _startGame () {
