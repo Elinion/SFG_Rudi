@@ -1,11 +1,6 @@
 import Phaser from 'phaser'
 
 export default class GameOver extends Phaser.State {
-
-  constructor () {
-    super()
-  }
-
   create () {
     this._createGameOverLabel()
     this._createButtons()

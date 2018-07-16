@@ -1,3 +1,5 @@
+import Phaser from 'phaser'
+
 export default class Player extends Phaser.Sprite {
   constructor ({ game, x, y, asset, input, color, pos }) {
     super(game, x, y, asset)
@@ -23,7 +25,7 @@ export default class Player extends Phaser.Sprite {
     this.updateScore = this.updateScore.bind(this);
   }
 
-  onInit() {
+  onInit () {
     this.game.physics.enable(this);
 
     // Initial speed.
@@ -42,7 +44,7 @@ export default class Player extends Phaser.Sprite {
       { fontSize: '15px', fill: this.textColor });
   }
 
-  checkCarnet() {
+  checkCarnet () {
     if (this.hasCarnet) {
       if (this.stunTimer.running) {
         this.frame = 4;
@@ -56,7 +58,7 @@ export default class Player extends Phaser.Sprite {
     }
   }
 
-  checkStun() {
+  checkStun () {
     if (this.stunTimer.running) {
       this.frame = 3;
     } else if (this.frame === 3) {
@@ -64,7 +66,7 @@ export default class Player extends Phaser.Sprite {
     }
   }
 
-  movePlayer() {
+  movePlayer () {
     if (this.stunTimer.running) {
       this.speed = 50;
     } else {
@@ -90,24 +92,24 @@ export default class Player extends Phaser.Sprite {
     }
   }
 
-  stun() {
+  stun () {
     this.stunTimer.start();
     this.didInput = true;
   }
 
-  updateScore() {
+  updateScore () {
     if (this.hasCarnet) {
       this.score ++;
       this.scoreText.text = `Score: ${this.score}`;
     }
   }
 
-  _createTimer(timer, duration) {
+  _createTimer (timer, duration) {
     this[timer] = this.game.time.create();
     this[timer].add(duration, this._endTimer, this, timer, duration);
   }
 
-  _endTimer(timer, duration) {
+  _endTimer (timer, duration) {
     this[timer].destroy();
 
     this._createTimer(timer, duration);

@@ -1,10 +1,8 @@
-/* globals __DEV__ */
 import Phaser from 'phaser'
 import Rudi from '../sprites/Rudi'
 import Player from '../sprites/Player'
 
 export default class extends Phaser.State {
-
   constructor () {
     super()
     this._updateRudi = this._updateRudi.bind(this)
@@ -18,6 +16,8 @@ export default class extends Phaser.State {
     this.scores = []
     this.rudiSpeed = 150
     this.rudiAwakingTime = 3
+
+    this.onPause = false
   }
 
   preload () {
@@ -64,21 +64,23 @@ export default class extends Phaser.State {
   }
 
   update () {
-    this.players.map(player => {
-      player.checkCarnet()
-      player.checkStun()
-      player.movePlayer()
-      player.updateScore()
-    })
+    if (!this.onPause) {
+      this.players.map(player => {
+        player.checkCarnet()
+        player.checkStun()
+        player.movePlayer()
+        player.updateScore()
+      })
 
-    this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide)
-    this._updateRudi()
+      this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide)
+      this._updateRudi()
+    }
   }
 
   _updateRudi () {
-      const playerToChase = this._getPlayerWithCarnet()
-      this.rudi.chasePlayer(playerToChase)
-      this.rudi.checkPlayerCollision()
+    const playerToChase = this._getPlayerWithCarnet()
+    this.rudi.chasePlayer(playerToChase)
+    this.rudi.checkPlayerCollision()
   }
 
   _getPlayerWithCarnet () {
