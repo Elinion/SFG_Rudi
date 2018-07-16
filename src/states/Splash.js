@@ -13,10 +13,12 @@ export default class extends Phaser.State {
     //
     // load your assets
     //
-    this.load.image('mushroom', 'assets/images/mushroom2.png')
+    this.game.load.image('tryAgain', '../../assets/images/tryAgain.png')
+    this.game.load.image('rudi', '../../assets/images/rudi.png');
+    this.game.load.image('playButton', '../../assets/images/playButton.png');
   }
 
   create () {
-    this.state.start('Game')
+    this.state.start('Menu')
   }
 }
