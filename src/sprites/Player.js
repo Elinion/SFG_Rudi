@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 
 export default class Player extends Phaser.Sprite {
-  constructor ({ game, x, y, asset, input, color, pos }) {
+  constructor ({ game, x, y, asset, input, color, pos, hasCarnetAsset, disabledAsset, stunAsset, stunCarnetAsset }) {
     super(game, x, y, asset)
     this.anchor.setTo(0.5)
 
@@ -12,11 +12,18 @@ export default class Player extends Phaser.Sprite {
 
     this.defaultAngle = 200
     this.didInput = false;
+
+    this.defaultAsset = asset
+    this.hasCarnetAsset = hasCarnetAsset
     this.hasCarnet = false;
     this.collisionTimer = null
     this.collisionTimerDuration = 3000
+    this.disabledAsset = disabledAsset
     this.score = 0
     this.speed = 200
+
+    this.stunAsset = stunAsset
+    this.stunCarnetAsset = stunCarnetAsset
     this.stunTimer = null
     this.stunTimerDuration = 3000
 
@@ -47,22 +54,22 @@ export default class Player extends Phaser.Sprite {
   checkCarnet () {
     if (this.hasCarnet) {
       if (this.stunTimer.running) {
-        this.frame = 4;
+        this.loadTexture(this.stunCarnetAsset)
       } else {
-        this.frame = 1;
+        this.loadTexture(this.hasCarnetAsset)
       }
     } else if (this.collisionTimer.running) {
-      this.frame = 2;
-    } else if (this.frame === 2) {
-      this.frame = 0;
+      this.loadTexture(this.disabledAsset)
+    } else if (this.key === this.disabledAsset) {
+      this.loadTexture(this.defaultAsset, 0)
     }
   }
 
   checkStun () {
     if (this.stunTimer.running) {
-      this.frame = 3;
-    } else if (this.frame === 3) {
-      this.frame = 0;
+      this.loadTexture(this.stunAsset)
+    } else if (this.key === this.stunAsset) {
+      this.loadTexture(this.defaultAsset)
     }
   }
 

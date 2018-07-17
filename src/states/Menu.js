@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { updateImagesRandom } from '../utils'
 
 export default class Menu extends Phaser.State {
   init () {
@@ -21,7 +22,7 @@ export default class Menu extends Phaser.State {
     this._createDeco()
 
     this.timer = this.game.time.create(false)
-    this.timer.loop(this.animDuration, this._updateImagesRandom, this, [
+    this.timer.loop(this.animDuration, updateImagesRandom, this, this.game, [
       { image: this.title, frames: 6 },
       { image: this.playButton, frames: 4 },
       { image: this.decorationsItems[0], frames: 6 },
@@ -79,18 +80,6 @@ export default class Menu extends Phaser.State {
 
       return sprite
     })
-  }
-
-  _updateImagesRandom (arr) {
-    arr.map(element => {
-      let rndFrame = this.game.rnd.integerInRange(0, element.frames)
-
-      while (element.image.frame === rndFrame) {
-        rndFrame = this.game.rnd.integerInRange(0, element.frames)
-      }
-
-      element.image.frame = rndFrame
-    });
   }
 
   _startGame () {
