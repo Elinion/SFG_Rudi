@@ -1,9 +1,9 @@
 import Phaser from 'phaser'
-import { updateImagesRandom } from '../utils'
+import { updateImagesRandom, animDuration } from '../utils'
 
 export default class Menu extends Phaser.State {
   init () {
-    this.animDuration = 80
+    this.animDuration = animDuration
     this.animationEasing = Phaser.Easing.Circular.InOut
 
     this.decorationsData = [

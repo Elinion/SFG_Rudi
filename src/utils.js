@@ -4,6 +4,8 @@ export const centerGameObjects = (objects) => {
   })
 }
 
+export const animDuration = 80
+
 export const updateImagesRandom = (game, arr) => {
   arr.forEach(element => {
     let rndFrame = game.rnd.integerInRange(0, element.frames)

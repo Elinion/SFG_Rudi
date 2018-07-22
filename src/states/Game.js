@@ -14,16 +14,16 @@ export default class extends Phaser.State {
     this.playersInputs = ['LEFT', 'RIGHT']
     this.playersColors = ['#22b6d6', '#bf22d6']
     this.scores = []
-    this.rudiSpeed = 150
-    this.rudiAwakingTime = 3
+    this.rudiSpeed = 50
+    this.rudiAwakingTime = 300
 
     this.onPause = false
   }
 
   preload () {
     for (let i = 0; i < this.nbOfPlayers; i++) {
-      this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}/default.png`, 40, 30)
-      this.game.load.spritesheet(`player${i}_carnet`, `../../assets/images/player${i}/carnet.png`, 40, 30)
+      this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}/default.png`, 416, 256, 6)
+      this.game.load.spritesheet(`player${i}_carnet`, `../../assets/images/player${i}/carnet.png`, 416, 256, 6)
       this.game.load.spritesheet(`player${i}_disabled`, `../../assets/images/player${i}/disabled.png`, 40, 30)
       this.game.load.spritesheet(`player${i}_stun`, `../../assets/images/player${i}/stun.png`, 40, 30)
       this.game.load.spritesheet(`player${i}_stunCarnet`, `../../assets/images/player${i}/stunCarnet.png`, 40, 30)
@@ -36,8 +36,8 @@ export default class extends Phaser.State {
     for (let i = 0; i < this.nbOfPlayers; i++) {
       this.players[i] = new Player({
         game: this.game,
-        x: (i + 1) * 100,
-        y: (i + 1) * 100,
+        x: (i + 1) * 200,
+        y: (i + 1) * 200,
         asset: `player${i}`,
         input: this.playersInputs[i],
         color: this.playersColors[i],
@@ -105,5 +105,14 @@ export default class extends Phaser.State {
       player2.hasCarnet = false
       player1.hasCarnet = true
     }
+  }
+
+  render () {
+    this.players.map(player => {
+      this.game.debug.body(player)
+      // this.game.debug.bodyInfo(player, 50, 50)
+    })
+
+    this.game.debug.body(this.rudi, "#17647655")
   }
 }

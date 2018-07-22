@@ -8,7 +8,9 @@ export default class Rudi extends Phaser.Sprite {
     this.speed = 0
     this.anchor.setTo(0.5, 0.5)
     this.game.physics.enable(this);
-    this.body.setSize(10, 10)
+
+    const hitboxRadius = 15
+    this.body.setCircle(hitboxRadius, (this.width)/2-hitboxRadius, (this.height)/2-hitboxRadius)
 
     this.chasePlayer = this.chasePlayer.bind(this)
     this.checkPlayerCollision = this.checkPlayerCollision.bind(this)
