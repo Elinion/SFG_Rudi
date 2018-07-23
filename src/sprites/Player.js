@@ -2,8 +2,8 @@ import Phaser from 'phaser'
 import { animDuration } from '../utils'
 
 export default class Player extends Phaser.Sprite {
-  constructor ({ game, x, y, asset, input, color, pos, hasCarnetAsset, disabledAsset, stunAsset, stunCarnetAsset }) {
-    super(game, x, y, asset)
+  constructor ({ game, x, y, atlas, input, color, pos, /* hasCarnetAsset,*/ disabledAsset, stunAsset, stunCarnetAsset }) {
+    super(game, x, y, atlas)
     this.xOffset = 0.7
 
     this.game = game
@@ -13,11 +13,9 @@ export default class Player extends Phaser.Sprite {
 
     this.defaultAngle = 200
     this.bodySize = 50
-    this.didInput = false;
+    this.didInput = false
 
-    this.defaultAsset = asset
-    this.hasCarnetAsset = hasCarnetAsset
-    this.hasCarnet = false;
+    this.hasCarnet = false
     this.collisionTimer = null
     this.collisionTimerDuration = 3000
     this.disabledAsset = disabledAsset
@@ -29,60 +27,66 @@ export default class Player extends Phaser.Sprite {
     this.stunTimer = null
     this.stunTimerDuration = 3000
 
-    this.animations.add('move')
-    this.animations.play('move', 1 / (animDuration / 1000), true)
+    this.animations.add('defaultMove', Phaser.Animation.generateFrameNames('perso-0-', 0, 5))
+    this.animations.add('carnetMove', Phaser.Animation.generateFrameNames('persoCarnet-', 0, 5))
+    this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
     this.scale.setTo(0.5)
 
-    this.checkCarnet = this.checkCarnet.bind(this);
-    this.movePlayer = this.movePlayer.bind(this);
-    this.updateScore = this.updateScore.bind(this);
+    this.checkCarnet = this.checkCarnet.bind(this)
+    this.movePlayer = this.movePlayer.bind(this)
+    this.updateScore = this.updateScore.bind(this)
   }
 
   onInit () {
-    this.game.physics.enable(this);
+    this.game.physics.enable(this)
 
     this.anchor.setTo(this.xOffset, 0.5)
 
     // Sprite hitbox.
-    // this.body.setCircle(this.bodySize, (this.width * this.anchor.x) + this.bodySize/2, (this.height * this.anchor.y) + this.bodySize/2)
     this.body.setCircle(this.bodySize, (this.width * 1/this.scale.x * this.anchor.x) - this.bodySize, (this.height * 1/this.scale.y * this.anchor.y) - this.bodySize)
 
     // Initial speed.
-    this.body.velocity.x = 0;
-    this.body.velocity.y = 0;
+    this.body.velocity.x = 0
+    this.body.velocity.y = 0
 
     // Bounce against walls.
-    this.body.collideWorldBounds = true;
-    this.body.bounce.set(1);
+    this.body.collideWorldBounds = true
+    this.body.bounce.set(1)
 
     // Manage collisions timer
-    this._createTimer('collisionTimer', this.collisionTimerDuration);
-    this._createTimer('stunTimer', this.stunTimerDuration);
+    this._createTimer('collisionTimer', this.collisionTimerDuration)
+    this._createTimer('stunTimer', this.stunTimerDuration)
 
     this.scoreText = this.game.add.text(10, this.textPosition, `Score: ${this.score}`,
-      { fontSize: '15px', fill: this.textColor });
+      { fontSize: '15px', fill: this.textColor })
   }
 
   checkCarnet () {
-    if (this.hasCarnet) {
-      if (this.stunTimer.running) {
-        this.loadTexture(this.stunCarnetAsset)
-      } else {
-        this.loadTexture(this.hasCarnetAsset)
-      }
-    } else if (this.collisionTimer.running) {
-      this.loadTexture(this.disabledAsset)
-    } else if (this.key === this.disabledAsset) {
-      this.loadTexture(this.defaultAsset, 0)
+    if (this.frameName.indexOf('persoCarnet-') === -1 && this.hasCarnet) {
+      // If the player gets the Carnet and is playing another animation, change to Carnet animation.
+      this.animations.play('carnetMove', 1 / (animDuration / 1000), true)
+      /* if (this.stunTimer.running) {
+        this.loadTexture(this.stunCarnetAsset, 0, false)
+      } else { */
+      // }
+    } else if (this.frameName.indexOf('perso-0-') === -1 && !this.hasCarnet) {
+      // If the player loses the Carnet and is playing another animation, change back to default animation.
+      this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
     }
+    
+    /* else if (this.collisionTimer.running) {
+      this.loadTexture(this.disabledAsset, 0, false)
+    } else if (this.key === this.disabledAsset) {
+      // this.loadTexture(this.defaultAsset, 0, false)
+    }*/ 
   }
 
   checkStun () {
-    if (this.stunTimer.running) {
-      this.loadTexture(this.stunAsset)
+    /* if (this.stunTimer.running) {
+      this.loadTexture(this.stunAsset, 0, false)
     } else if (this.key === this.stunAsset) {
-      this.loadTexture(this.defaultAsset)
-    }
+      // this.loadTexture(this.defaultAsset, 0, false)
+    } */
   }
 
   movePlayer () {
@@ -119,7 +123,7 @@ export default class Player extends Phaser.Sprite {
   updateScore () {
     if (this.hasCarnet) {
       this.score ++;
-      this.scoreText.text = `anchor x: ${this.anchor.x * this.width}, anchor y: ${this.anchor.y * this.height} // circle center x: ${this.body.center.x}, center y: ${this.body.center.y}`;
+      this.scoreText.text = `Score: ${this.score}`;
     }
   }
 

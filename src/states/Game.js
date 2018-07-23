@@ -22,8 +22,9 @@ export default class extends Phaser.State {
 
   preload () {
     for (let i = 0; i < this.nbOfPlayers; i++) {
-      this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}/default.png`, 416, 256, 6)
-      this.game.load.spritesheet(`player${i}_carnet`, `../../assets/images/player${i}/carnet.png`, 416, 256, 6)
+      // this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}/default.png`, 416, 256, 6)
+      // this.game.load.spritesheet(`player${i}_carnet`, `../../assets/images/player${i}/carnet.png`, 416, 256, 6)
+      this.game.load.atlas(`player${i}_atlas`, `../../assets/sprites/player${i}-atlas/spritesheet.png`, `../../assets/sprites/player${i}-atlas/sprites.json`)
       this.game.load.spritesheet(`player${i}_disabled`, `../../assets/images/player${i}/disabled.png`, 40, 30)
       this.game.load.spritesheet(`player${i}_stun`, `../../assets/images/player${i}/stun.png`, 40, 30)
       this.game.load.spritesheet(`player${i}_stunCarnet`, `../../assets/images/player${i}/stunCarnet.png`, 40, 30)
@@ -38,11 +39,11 @@ export default class extends Phaser.State {
         game: this.game,
         x: (i + 1) * 200,
         y: (i + 1) * 200,
-        asset: `player${i}`,
+        atlas: `player${i}_atlas`,
         input: this.playersInputs[i],
         color: this.playersColors[i],
         pos: i * 15,
-        hasCarnetAsset: `player${i}_carnet`,
+        // hasCarnetAsset: `player${i}_carnet`,
         disabledAsset: `player${i}_disabled`,
         stunAsset: `player${i}_stun`,
         stunCarnetAsset: `player${i}_stunCarnet`
@@ -107,12 +108,14 @@ export default class extends Phaser.State {
     }
   }
 
+  // This is all for debug purposes.
   render () {
-    this.players.map(player => {
-      this.game.debug.body(player)
+    this.players.map((player, i) => {
+      // this.game.debug.body(player)
       // this.game.debug.bodyInfo(player, 50, 50)
+      // this.game.debug.text(player.frameName, 30, 30*(i+1))
     })
 
-    this.game.debug.body(this.rudi, "#17647655")
+    // this.game.debug.body(this.rudi, "#17647655") 
   }
 }
