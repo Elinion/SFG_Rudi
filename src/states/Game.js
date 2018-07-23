@@ -25,9 +25,6 @@ export default class extends Phaser.State {
       // this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}/default.png`, 416, 256, 6)
       // this.game.load.spritesheet(`player${i}_carnet`, `../../assets/images/player${i}/carnet.png`, 416, 256, 6)
       this.game.load.atlas(`player${i}_atlas`, `../../assets/sprites/player${i}-atlas/spritesheet.png`, `../../assets/sprites/player${i}-atlas/sprites.json`)
-      this.game.load.spritesheet(`player${i}_disabled`, `../../assets/images/player${i}/disabled.png`, 40, 30)
-      this.game.load.spritesheet(`player${i}_stun`, `../../assets/images/player${i}/stun.png`, 40, 30)
-      this.game.load.spritesheet(`player${i}_stunCarnet`, `../../assets/images/player${i}/stunCarnet.png`, 40, 30)
     }
   }
 
@@ -43,10 +40,6 @@ export default class extends Phaser.State {
         input: this.playersInputs[i],
         color: this.playersColors[i],
         pos: i * 15,
-        // hasCarnetAsset: `player${i}_carnet`,
-        disabledAsset: `player${i}_disabled`,
-        stunAsset: `player${i}_stun`,
-        stunCarnetAsset: `player${i}_stunCarnet`
       })
       this.players[i].onInit()
 
@@ -76,7 +69,7 @@ export default class extends Phaser.State {
     if (!this.onPause) {
       this.players.map(player => {
         player.checkCarnet()
-        player.checkStun()
+        // player.checkStun()
         player.movePlayer()
         player.updateScore()
       })

@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import { animDuration } from '../utils'
 
 export default class Player extends Phaser.Sprite {
-  constructor ({ game, x, y, atlas, input, color, pos, disabledAsset }) {
+  constructor ({ game, x, y, atlas, input, color, pos }) {
     super(game, x, y, atlas)
     this.xOffset = 0.7
 
@@ -18,7 +18,6 @@ export default class Player extends Phaser.Sprite {
     this.hasCarnet = false
     this.collisionTimer = null
     this.collisionTimerDuration = 3000
-    this.disabledAsset = disabledAsset
     this.score = 0
     this.speed = 200
 
@@ -28,6 +27,7 @@ export default class Player extends Phaser.Sprite {
     this.animations.add('defaultMove', Phaser.Animation.generateFrameNames('perso-0-', 0, 5))
     this.animations.add('carnetMove', Phaser.Animation.generateFrameNames('persoCarnet-', 0, 5))
     this.animations.add('stunMove', Phaser.Animation.generateFrameNames('persoStun-', 0, 3))
+    this.animations.add('disabledMove', Phaser.Animation.generateFrameNames('persoDisabled-', 0, 3))
     this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
     this.scale.setTo(0.5)
 
@@ -61,33 +61,34 @@ export default class Player extends Phaser.Sprite {
   }
 
   checkCarnet () {
-    if (this.frameName.indexOf('persoCarnet-') === -1 && this.hasCarnet) {
-      // If the player gets the Carnet and is playing another animation, change to Carnet animation.
-      this.animations.play('carnetMove', 1 / (animDuration / 1000), true)
-      /* if (this.stunTimer.running) {
-        this.loadTexture(this.stunCarnetAsset, 0, false)
-      } else { */
-      // }
+    if (this.frameName.indexOf('persoDisabled-') === -1 && this.stunTimer.running) {
+      // If the stun timer is running and another animation is playing, change to Stun animation.
+      this.animations.play('disabledMove', 1 / (animDuration / 1000), true)
     } 
+    
+    else if (!this.stunTimer.running) {
+      if (this.frameName.indexOf('persoStun-') === -1 && this.collisionTimer.running) {
+        // If the player is disabled and is playing another animation, change to disabled animation.
+        this.animations.play('stunMove', 1 / (animDuration / 1000), true)
+      }
 
-    if (this.frameName.indexOf('perso-0-') === -1 && !this.hasCarnet) {
-      // If the player loses the Carnet and is playing another animation, change to default animation.
-      this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
+      else if (!this.collisionTimer.running) {
+        if (this.frameName.indexOf('persoCarnet-') === -1 && this.hasCarnet) {
+          // If the player gets the Carnet and is playing another animation, change to Carnet animation.
+          this.animations.play('carnetMove', 1 / (animDuration / 1000), true)
+        } 
+  
+        else if (this.frameName.indexOf('perso-0-') === -1 && !this.hasCarnet) {
+          // If the player loses the Carnet and is playing another animation, change to default animation.
+          this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
+        }
+      }
     }
     
-     /*else if (this.key === this.disabledAsset) {
-      // this.loadTexture(this.defaultAsset, 0, false)
-    }*/ 
+    
   }
 
   checkStun () {
-    if (this.frameName.indexOf('persoStun-') === -1 && this.stunTimer.running) {
-      // If the stun timer is running and another animation is playing, change to Stun animation.
-      this.animations.play('stunMove', 1 / (animDuration / 1000), true)
-    } else if (this.frameName.indexOf('persoStun-') !== -1 && !(this.stunTimer.running)) {
-      this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
-    }
-
     /* if (this.stunTimer.running) {
       this.loadTexture(this.stunAsset, 0, false)
     } else if (this.key === this.stunAsset) {
