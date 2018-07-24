@@ -22,13 +22,13 @@ export default class extends Phaser.State {
 
   preload () {
     for (let i = 0; i < this.nbOfPlayers; i++) {
-      // this.game.load.spritesheet(`player${i}`, `../../assets/images/player${i}/default.png`, 416, 256, 6)
-      // this.game.load.spritesheet(`player${i}_carnet`, `../../assets/images/player${i}/carnet.png`, 416, 256, 6)
       this.game.load.atlas(`player${i}_atlas`, `../../assets/sprites/player${i}-atlas/spritesheet.png`, `../../assets/sprites/player${i}-atlas/sprites.json`)
     }
   }
 
   create () {
+    this._createBg()
+
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
 
     for (let i = 0; i < this.nbOfPlayers; i++) {
@@ -49,6 +49,10 @@ export default class extends Phaser.State {
     this.players[this.game.rnd.integerInRange(0, this.players.length - 1)].hasCarnet = true
 
     this._createRudi()
+  }
+
+  _createBg () {
+    this.game.add.tileSprite(0, 0, this.game.world.width, this.game.world.height, 'bg')
   }
 
   _createRudi () {

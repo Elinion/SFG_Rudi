@@ -24,7 +24,7 @@ export default class Player extends Phaser.Sprite {
     this.stunTimer = null
     this.stunTimerDuration = 3000
 
-    this.animations.add('defaultMove', Phaser.Animation.generateFrameNames('perso-0-', 0, 5))
+    this.animations.add('defaultMove', Phaser.Animation.generateFrameNames('persoDefault-', 0, 5))
     this.animations.add('carnetMove', Phaser.Animation.generateFrameNames('persoCarnet-', 0, 5))
     this.animations.add('stunMove', Phaser.Animation.generateFrameNames('persoStun-', 0, 3))
     this.animations.add('disabledMove', Phaser.Animation.generateFrameNames('persoDisabled-', 0, 3))
@@ -65,7 +65,7 @@ export default class Player extends Phaser.Sprite {
       // If the stun timer is running and another animation is playing, change to Stun animation.
       this.animations.play('disabledMove', 1 / (animDuration / 1000), true)
     } 
-    
+
     else if (!this.stunTimer.running) {
       if (this.frameName.indexOf('persoStun-') === -1 && this.collisionTimer.running) {
         // If the player is disabled and is playing another animation, change to disabled animation.
