@@ -29,6 +29,7 @@ export default class Player extends Phaser.Sprite {
     this.animations.add('stunMove', Phaser.Animation.generateFrameNames('persoStun-', 0, 3))
     this.animations.add('disabledMove', Phaser.Animation.generateFrameNames('persoDisabled-', 0, 3))
     this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
+    
     this.scale.setTo(0.5)
 
     this.checkCarnet = this.checkCarnet.bind(this)
