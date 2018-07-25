@@ -30,7 +30,7 @@ export default class Player extends Phaser.Sprite {
     this.animations.add('disabledMove', Phaser.Animation.generateFrameNames('persoDisabled-', 0, 3))
     this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
     
-    this.scale.setTo(0.5)
+    this.scale.setTo(0.2)
 
     this.checkCarnet = this.checkCarnet.bind(this)
     this.movePlayer = this.movePlayer.bind(this)

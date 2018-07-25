@@ -58,7 +58,7 @@ export default class extends Phaser.State {
   _createRudi () {
     const posX = this.world.centerX
     const posY = this.world.centerY
-    this.rudi = new Rudi(this.game, posX, posY, 'rudi', this.players)
+    this.rudi = new Rudi(this.game, posX, posY, 'rudi_atlas', this.players)
     this.game.add.existing(this.rudi)
     this._awakeRudiAfterTime(this.rudiAwakingTime)
   }

@@ -1,16 +1,21 @@
 import Phaser from 'phaser'
+import { animDuration } from '../utils'
 
 export default class Rudi extends Phaser.Sprite {
-  constructor (game, x, y, asset, players) {
-    super(game, x, y, asset)
+  constructor (game, x, y, atlas, players) {
+    super(game, x, y, atlas)
     this.players = players
     this.game = game
     this.speed = 0
     this.anchor.setTo(0.5, 0.5)
+    this.scale.setTo(0.3)
     this.game.physics.enable(this);
 
-    const hitboxRadius = 15
-    this.body.setCircle(hitboxRadius, (this.width)/2-hitboxRadius, (this.height)/2-hitboxRadius)
+    const hitboxRadius = 20
+    this.body.setCircle(hitboxRadius, (this.width * 1/this.scale.x * this.anchor.x) - hitboxRadius, (this.height * 1/this.scale.y * this.anchor.y) - hitboxRadius)
+
+    this.animations.add('defaultRudi', Phaser.Animation.generateFrameNames('rudi-', 0, 5))
+    this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
 
     this.chasePlayer = this.chasePlayer.bind(this)
     this.checkPlayerCollision = this.checkPlayerCollision.bind(this)
@@ -22,9 +27,10 @@ export default class Rudi extends Phaser.Sprite {
       player,
       this.speed,
     )
-    const angleInRadians = this.game.physics.arcade.angleBetween(this, player)
+    // Uncomment this to make the sprite rotate in the chased player's direction
+    /* const angleInRadians = this.game.physics.arcade.angleBetween(this, player)
     const angleInDegrees = angleInRadians * 180 / Math.PI
-    this.body.rotation = angleInDegrees
+    this.body.rotation = angleInDegrees */
   };
 
   checkPlayerCollision () {

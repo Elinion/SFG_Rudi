@@ -30,6 +30,8 @@ export default class extends Phaser.State {
     this.load.image('bg', './assets/images/paperBg.jpg')
     this.load.image('loaderBg', './assets/images/loader-bg.png')
     this.load.image('loaderBar', './assets/images/loader-bar.png')
+
+    this.game.load.atlas(`rudi_atlas`, `../../assets/sprites/rudi-atlas/spritesheet.png`, `../../assets/sprites/rudi-atlas/sprites.json`)
   }
 
   render () {
