@@ -1,15 +1,17 @@
 import Phaser from 'phaser'
+import { updateImagesRandom, animDuration } from '../utils'
 
 export default class Menu extends Phaser.State {
   init () {
-    this.animDuration = 80
+    this.animDuration = animDuration
     this.animationEasing = Phaser.Easing.Circular.InOut
 
     this.decorationsData = [
       { key: 'deco1', percentx: 0.1, percenty: 0.44, scale: 0.5, random: true },
       { key: 'deco2', percentx: 0.8, percenty: 0.15, scale: 1, random: false },
       { key: 'deco3', percentx: 0.1, percenty: 0.2, scale: 1, random: true },
-      { key: 'deco4', percentx: 0.8, percenty: 0.7, scale: 0.4, random: true }
+      { key: 'deco4', percentx: 0.8, percenty: 0.7, scale: 0.4, random: true },
+      { key: 'deco5', percentx: 0.25, percenty: 0, scale: 0.5, random: false }
     ]
   }
 
@@ -20,7 +22,7 @@ export default class Menu extends Phaser.State {
     this._createDeco()
 
     this.timer = this.game.time.create(false)
-    this.timer.loop(this.animDuration, this._updateImagesRandom, this, [
+    this.timer.loop(this.animDuration, updateImagesRandom, this, this.game, [
       { image: this.title, frames: 6 },
       { image: this.playButton, frames: 4 },
       { image: this.decorationsItems[0], frames: 6 },
@@ -78,18 +80,6 @@ export default class Menu extends Phaser.State {
 
       return sprite
     })
-  }
-
-  _updateImagesRandom (arr) {
-    arr.map(element => {
-      let rndFrame = this.game.rnd.integerInRange(0, element.frames)
-
-      while (element.image.frame === rndFrame) {
-        rndFrame = this.game.rnd.integerInRange(0, element.frames)
-      }
-
-      element.image.frame = rndFrame
-    });
   }
 
   _startGame () {
