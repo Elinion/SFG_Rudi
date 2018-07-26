@@ -19,7 +19,12 @@ export default class Player extends Phaser.Sprite {
     this.collisionTimer = null
     this.collisionTimerDuration = 3000
     this.score = 0
-    this.speed = 200
+    
+    this.baseSpeed = 200
+    this.slowSpeed = 50
+    this.speed = this.baseSpeed
+    this.bounceMaxSpeed = 800
+    this.bounceTimerMs = 100
 
     this.stunTimer = null
     this.stunTimerDuration = 3000
@@ -32,6 +37,7 @@ export default class Player extends Phaser.Sprite {
     
     this.scale.setTo(0.2)
 
+    this.bouncePlayer = this.bouncePlayer.bind(this)
     this.checkCarnet = this.checkCarnet.bind(this)
     this.movePlayer = this.movePlayer.bind(this)
     this.updateScore = this.updateScore.bind(this)
@@ -97,14 +103,36 @@ export default class Player extends Phaser.Sprite {
     } */
   }
 
+  bouncePlayer () {
+    this.speed = this.bounceMaxSpeed
+    const collisionBounce = game.add.tween(this)
+    
+    collisionBounce.onStart.add(() => {
+      this.isBouncing = true
+    }, this)
+
+    collisionBounce.onComplete.add(() => {
+      this.isBouncing = false
+      this.updateSpeed = true
+    }, this)
+    
+    // to(properties, duration, ease, autoStart, delay, repeat, yoyo)
+
+    collisionBounce.to({ speed: this.baseSpeed }, this.bounceTimerMs, Phaser.Easing.Linear.None, true)
+  }
+
   movePlayer () {
-    if (this.stunTimer.running) {
-      this.speed = 50;
-    } else {
-      if (this.speed === 50) {
+    if (this.isBouncing) { // If the player is bouncing, update their speed to tween.
+      this.updateSpeed = true
+    }
+
+    if (this.stunTimer.running) { // If the player is stunned, divide their speed (takes bounce into account).
+      this.speed = this.slowSpeed;
+    } else if (!this.isBouncing) { // Else, if the player is not bouncing, force update their speed.
+      if (this.speed === this.slowSpeed) { // If the player is not stunned but still slow, update their speed to normal speed.
         this.updateSpeed = true
       }
-      this.speed = 200;
+      this.speed = this.baseSpeed;
     }
 
     if (this.game.input.keyboard.isDown(Phaser.Keyboard[this.playerInput])) {
@@ -120,8 +148,10 @@ export default class Player extends Phaser.Sprite {
       if (this.body.blocked.up || this.body.blocked.down) {
         let collisionAngle = this.body.rotation - 90;
         this.body.rotation = 270 - collisionAngle;
+        this.bouncePlayer()
       } else if (this.body.blocked.right || this.body.blocked.left) {
         this.body.rotation = 180 - this.body.rotation;
+        this.bouncePlayer()
       }
     }
   }

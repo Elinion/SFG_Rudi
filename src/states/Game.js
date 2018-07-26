@@ -14,8 +14,8 @@ export default class extends Phaser.State {
     this.playersInputs = ['LEFT', 'RIGHT']
     this.playersColors = ['#22b6d6', '#bf22d6']
     this.scores = []
-    this.rudiSpeed = 50
-    this.rudiAwakingTime = 300
+    this.rudiBaseSpeed = 50
+    this.rudiAwakingTime = 10000
 
     this.onPause = false
   }
@@ -65,7 +65,8 @@ export default class extends Phaser.State {
 
   _awakeRudiAfterTime (seconds) {
     setTimeout(() => {
-      this.rudi.speed = this.rudiSpeed
+      this.rudi.speed = this.rudiBaseSpeed
+      this._increaseSpeed(0)
     }, seconds * 1000)
   }
 
@@ -94,6 +95,9 @@ export default class extends Phaser.State {
   }
 
   _onPlayersCollide (player1, player2) {
+    player1.bouncePlayer()
+    player2.bouncePlayer()
+
     if (player1.hasCarnet && !player2.collisionTimer.running) {
       player1.collisionTimer.start()
       player1.hasCarnet = false
@@ -110,7 +114,10 @@ export default class extends Phaser.State {
     this.players.map((player, i) => {
       // this.game.debug.body(player)
       // this.game.debug.bodyInfo(player, 50, 50)
-      // this.game.debug.text(player.frameName, 30, 30*(i+1))
+      /* this.game.debug.text(
+        Math.sqrt(player.body.velocity.x * player.body.velocity.x + player.body.velocity.y * player.body.velocity.y), 
+        30, 30*(i+1)
+      ) */
     })
 
     // this.game.debug.body(this.rudi, "#17647655") 
