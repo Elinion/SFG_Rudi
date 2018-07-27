@@ -14,7 +14,7 @@ export default class extends Phaser.State {
     this.playersInputs = ['LEFT', 'RIGHT']
     this.playersColors = ['#22b6d6', '#bf22d6']
     this.scores = []
-    this.rudiBaseSpeed = 50
+    this.rudiBaseSpeed = 45
     this.rudiAwakingTime = 10000
 
     this.onPause = false
@@ -66,7 +66,7 @@ export default class extends Phaser.State {
   _awakeRudiAfterTime (seconds) {
     setTimeout(() => {
       this.rudi.speed = this.rudiBaseSpeed
-      this._increaseSpeed(0)
+      this._increaseSpeed(5)
     }, seconds * 1000)
   }
 
@@ -74,12 +74,11 @@ export default class extends Phaser.State {
     if (!this.onPause) {
       this.players.map(player => {
         player.checkCarnet()
-        // player.checkStun()
         player.movePlayer()
         player.updateScore()
       })
 
-      this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide)
+      this.game.physics.arcade.collide(this.players, this.players, this._onPlayersCollide)
       this._updateRudi()
     }
   }
