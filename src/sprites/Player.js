@@ -13,7 +13,6 @@ export default class Player extends Phaser.Sprite {
 
     this.defaultAngle = 200
     this.bodySize = 100
-    this.updateSpeed = false
 
     this.hasCarnet = false
     this.collisionTimer = null
@@ -27,8 +26,15 @@ export default class Player extends Phaser.Sprite {
     this.slowSpeed = 50
     this.speed = this.baseSpeed
     this.bounceMaxSpeed = 800
-    this.bounceSqueeze = this.scale.x * 0.7
     this.bounceTimerMs = 100
+
+    this.squeezeScale = this.scale.x * 0.6
+    this.squeezeTimerMs = 200
+
+    this.rotationTimer = null
+    this.currentSpeedBoost = 0
+    this.speedBoost = 800
+    this.maxBoostDuration = 600
 
     this.stunTimer = null
     this.stunTimerDuration = 3000
@@ -40,7 +46,7 @@ export default class Player extends Phaser.Sprite {
     this.animations.play('defaultMove', 1 / (animDuration / 1000), true)
 
     this.bouncePlayer = this.bouncePlayer.bind(this)
-    this.checkCarnet = this.checkCarnet.bind(this)
+    this.checkStatus = this.checkStatus.bind(this)
     this.movePlayer = this.movePlayer.bind(this)
     this.updateScore = this.updateScore.bind(this)
   }
@@ -64,12 +70,13 @@ export default class Player extends Phaser.Sprite {
     // Manage collisions timer
     this._createTimer('collisionTimer', this.collisionTimerDuration)
     this._createTimer('stunTimer', this.stunTimerDuration)
+    this._createTimer('rotationTimer', this.rotationTimer)
 
     this.scoreText = this.game.add.text(10, this.textPosition, `Score: ${this.score}`,
       { fontSize: '15px', fill: this.textColor })
   }
 
-  checkCarnet () {
+  checkStatus () {
     // ==> THE PLAYER HAS HIT RUDI
     if (this.frameName.indexOf('persoDisabled-') === -1 && this.stunTimer.running) {
       // If the stun timer is running and another animation is playing, change to Stun animation.
@@ -110,8 +117,8 @@ export default class Player extends Phaser.Sprite {
 
   // When the player collides with something (wall, player, Rudi), give them a very small speed dash.
   // Also make their sprite squeeze!
-  bouncePlayer () {
-    this.speed = this.bounceMaxSpeed
+  bouncePlayer (upDown = false, leftRight = false, maxSpeed = this.bounceMaxSpeed, duration = this.bounceTimerMs) {
+    this.speed = maxSpeed
     const collisionBounce = game.add.tween(this)
     
     collisionBounce.onStart.add(() => {
@@ -120,16 +127,20 @@ export default class Player extends Phaser.Sprite {
 
     collisionBounce.onComplete.add(() => {
       this.isBouncing = false
-      this.updateSpeed = true
+      this._updateSpeed()
     }, this)
     
-    collisionBounce.to({ speed: this.baseSpeed }, this.bounceTimerMs, Phaser.Easing.Linear.None, true)
+    collisionBounce.to({ speed: this.baseSpeed }, duration, Phaser.Easing.Linear.None, true)
+    this.squeezePlayer(upDown ? this.squeezeScale : this.baseScale, leftRight ? this.squeezeScale : this.baseScale)
+  }
 
+  // Squeeze the player's scale by a number.
+  squeezePlayer(scaleX = this.baseScale, scaleY = this.baseScale) {
     const collisionSqueeze = game.add.tween(this.scale)
-    collisionSqueeze.to({ x: this.bounceSqueeze, y: this.bounceSqueeze }, this.bounceTimerMs / 4, Phaser.Easing.Exponential.Out, true)
+    collisionSqueeze.to({ x: scaleX, y: scaleY }, this.squeezeTimerMs / 4, Phaser.Easing.Exponential.Out, true)
 
     const collisionSqueezeBack = game.add.tween(this.scale)
-    collisionSqueezeBack.to({ x: this.baseScale, y: this.baseScale }, this.bounceTimerMs * 3/4, Phaser.Easing.Exponential.Out)
+    collisionSqueezeBack.to({ x: this.baseScale, y: this.baseScale }, this.squeezeTimerMs * 3/4, Phaser.Easing.Exponential.Out)
     
     collisionSqueeze.onComplete.add(() => {
       collisionSqueezeBack.start()
@@ -138,42 +149,71 @@ export default class Player extends Phaser.Sprite {
 
   movePlayer () {
     if (this.isBouncing) { // If the player is bouncing, update their speed to tween.
-      this.updateSpeed = true
+      this._updateSpeed()
     }
 
     if (this.stunTimer.running) { // If the player is stunned, divide their speed (takes bounce into account).
       this.speed = this.slowSpeed;
     } else if (!this.isBouncing) { // Else, if the player is not bouncing, force update their speed.
       if (this.speed === this.slowSpeed) { // If the player is not stunned but still slow, update their speed to normal speed.
-        this.updateSpeed = true
+        this._updateSpeed()
       }
       this.speed = this.baseSpeed;
     }
 
     if (this.game.input.keyboard.isDown(Phaser.Keyboard[this.playerInput])) {
-      this.body.angularVelocity = -this.defaultAngle;
-      this.updateSpeed = true;
-    } else {
-      if (this.updateSpeed) {
-        this.body.angularVelocity = 0;
-        this.game.physics.arcade.velocityFromAngle(this.angle, this.speed, this.body.velocity);
-        this.updateSpeed = false;
+      this._rotationPlayer()
+    } 
+
+    if (!this.game.input.keyboard.isDown(Phaser.Keyboard[this.playerInput]) || this.isBouncing) {
+      if (this.isTurning) {
+        this._speedBoostPlayer()
+        this.isTurning = false
       }
 
       if (this.body.blocked.up || this.body.blocked.down) {
         let collisionAngle = this.body.rotation - 90;
         this.body.rotation = 270 - collisionAngle;
-        this.bouncePlayer()
+        this.bouncePlayer(false, true)
       } else if (this.body.blocked.right || this.body.blocked.left) {
         this.body.rotation = 180 - this.body.rotation;
-        this.bouncePlayer()
+        this.bouncePlayer(false, true)
       }
     }
   }
 
+  _rotationPlayer () {
+    this.body.angularVelocity = -this.defaultAngle;
+    this.isTurning = true
+
+    // if the timer has not started, start it (1st frame)
+    // else, if the timer is still running, increment boost
+    // else, when timer is over, don't increment speed boost anymore
+
+    if (!this.rotationTimer.running) {
+      this.rotationTimer.start()
+    }
+    else {
+      this.currentSpeedBoost++ // TODO: adjust speed gain per frame
+    }
+  }
+
+  // this is called only when the player releases their button
+  _speedBoostPlayer () {
+    if (this.rotationTimer.running) {
+      this._endTimer(this.rotationTimer, this.maxBoostDuration)
+    }
+    this._updateSpeed()
+  }
+
+  _updateSpeed () {
+    this.body.angularVelocity = 0;
+    this.game.physics.arcade.velocityFromAngle(this.angle, this.speed, this.body.velocity);
+  }
+
   stun () {
     this.stunTimer.start();
-    this.updateSpeed = true;
+    this._updateSpeed()
   }
 
   updateScore () {

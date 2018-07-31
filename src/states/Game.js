@@ -73,7 +73,7 @@ export default class extends Phaser.State {
   update () {
     if (!this.onPause) {
       this.players.map(player => {
-        player.checkCarnet()
+        player.checkStatus()
         player.movePlayer()
         player.updateScore()
       })
@@ -96,7 +96,7 @@ export default class extends Phaser.State {
   _onPlayersCollide (player1, player2) {
     player1.bouncePlayer()
     player2.bouncePlayer()
-
+    
     if (player1.hasCarnet && !player2.collisionTimer.running) {
       player1.collisionTimer.start()
       player1.hasCarnet = false
