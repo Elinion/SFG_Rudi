@@ -5,6 +5,7 @@ export const centerGameObjects = (objects) => {
 }
 
 export const animDuration = 80
+export const maxNumberOfPlayers = 2
 
 export const updateImagesRandom = (game, arr) => {
   arr.forEach(element => {

@@ -20,12 +20,6 @@ export default class extends Phaser.State {
     this.onPause = false
   }
 
-  preload () {
-    for (let i = 0; i < this.nbOfPlayers; i++) {
-      this.game.load.atlas(`player${i}_atlas`, `../../assets/sprites/player${i}-atlas/spritesheet.png`, `../../assets/sprites/player${i}-atlas/sprites.json`)
-    }
-  }
-
   create () {
     this._createBg()
 

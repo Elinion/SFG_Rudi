@@ -131,7 +131,7 @@ export default class Player extends Phaser.Sprite {
     }, this)
     
     collisionBounce.to({ speed: this.baseSpeed }, duration, Phaser.Easing.Linear.None, true)
-    this.squeezePlayer(upDown ? this.squeezeScale : this.baseScale, leftRight ? this.squeezeScale : this.baseScale)
+    // this.squeezePlayer(upDown ? this.squeezeScale : this.baseScale, leftRight ? this.squeezeScale : this.baseScale)
   }
 
   // Squeeze the player's scale by a number.
@@ -191,17 +191,17 @@ export default class Player extends Phaser.Sprite {
     // else, when timer is over, don't increment speed boost anymore
 
     if (!this.rotationTimer.running) {
-      this.rotationTimer.start()
+      // this.rotationTimer.start()
     }
     else {
-      this.currentSpeedBoost++ // TODO: adjust speed gain per frame
+      // this.currentSpeedBoost++ // TODO: adjust speed gain per frame
     }
   }
 
   // this is called only when the player releases their button
   _speedBoostPlayer () {
     if (this.rotationTimer.running) {
-      this._endTimer(this.rotationTimer, this.maxBoostDuration)
+      // this._endTimer(this.rotationTimer, this.maxBoostDuration)
     }
     this._updateSpeed()
   }
