@@ -24,13 +24,13 @@ module.exports = {
 
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
-    publicPath: './',
-    filename: 'js/bundle.js'
+    path: path.resolve(__dirname, 'www/dist'),
+    publicPath: './dist/',
+    filename: 'bundle.js'
   },
   plugins: [
     definePlugin,
-    new CleanWebpackPlugin(['build']),
+    new CleanWebpackPlugin(['www']),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new webpack.optimize.UglifyJsPlugin({
       drop_console: true,
@@ -39,11 +39,19 @@ module.exports = {
         comments: false
       }
     }),
-    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' /* chunkName= */ , filename: 'js/vendor.bundle.js' /* filename= */ }),
+    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'/* chunkName= */, filename: 'vendor.bundle.js'/* filename= */}),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, 'assets/**/*'),
+        to: path.resolve(__dirname, 'www')
+      }
+    ]),
     new HtmlWebpackPlugin({
-      filename: 'index.html', // path.resolve(__dirname, 'build', 'index.html'),
+      filename: path.resolve(__dirname, 'www/index.html'),
       template: './src/index.html',
-      chunks: ['vendor', 'app'],
+      chunks: [
+        'vendor', 'app'
+      ],
       chunksSortMode: 'manual',
       minify: {
         removeAttributeQuotes: true,
@@ -56,10 +64,7 @@ module.exports = {
         removeEmptyAttributes: true
       },
       hash: true
-    }),
-    new CopyWebpackPlugin([
-      { from: 'assets', to: 'assets' }
-    ])
+    })
   ],
   module: {
     rules: [

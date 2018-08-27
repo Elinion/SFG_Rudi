@@ -9,12 +9,18 @@ export default class Rudi extends Phaser.Sprite {
     this.speed = 0
     this.maxSpeed = 180
     this.increaseSpeedInterval = 5
-    this.anchor.setTo(0.5, 0.5)
+    this.anchor.setTo(0.5)
     this.scale.setTo(0.3)
     this.game.physics.enable(this);
 
-    const hitboxRadius = 20
-    this.body.setCircle(hitboxRadius, (this.width * 1/this.scale.x * this.anchor.x) - hitboxRadius, (this.height * 1/this.scale.y * this.anchor.y) - hitboxRadius)
+    const hitboxWidth = 300
+    this.body.setSize(
+      hitboxWidth, hitboxWidth, 
+      (this.width * 1/this.scale.x * this.anchor.x) - hitboxWidth / 2, 
+      (this.height * 1/this.scale.y * this.anchor.y) - hitboxWidth / 2
+    )
+
+    this.body.immovable = true
 
     this.animations.add('defaultRudi', Phaser.Animation.generateFrameNames('rudi-', 0, 5))
     this.animations.play('defaultRudi', 1 / (animDuration / 1000), true)
@@ -40,13 +46,13 @@ export default class Rudi extends Phaser.Sprite {
     if (this.speed <= this.maxSpeed) {
       setTimeout(() => {
         this.speed += t
-        this._increaseSpeed(5)
+        this._increaseSpeed(t)
       }, this.increaseSpeedInterval * 1000)
     }
   }
 
   checkPlayerCollision () {
-    this.game.physics.arcade.overlap(
+    this.game.physics.arcade.collide(
       this,
       this.players,
       (rudi, player) => this._onPlayerCollision(player),
@@ -61,6 +67,7 @@ export default class Rudi extends Phaser.Sprite {
     if (player.hasCarnet) {
       this._endGame()
     } else {
+      player.bouncePlayer()
       player.stun()
     }
   }

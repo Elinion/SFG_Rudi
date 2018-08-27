@@ -14,16 +14,10 @@ export default class extends Phaser.State {
     this.playersInputs = ['LEFT', 'RIGHT']
     this.playersColors = ['#22b6d6', '#bf22d6']
     this.scores = []
-    this.rudiBaseSpeed = 50
+    this.rudiBaseSpeed = 45
     this.rudiAwakingTime = 10000
 
     this.onPause = false
-  }
-
-  preload () {
-    for (let i = 0; i < this.nbOfPlayers; i++) {
-      this.game.load.atlas(`player${i}_atlas`, `../../assets/sprites/player${i}-atlas/spritesheet.png`, `../../assets/sprites/player${i}-atlas/sprites.json`)
-    }
   }
 
   create () {
@@ -66,20 +60,19 @@ export default class extends Phaser.State {
   _awakeRudiAfterTime (seconds) {
     setTimeout(() => {
       this.rudi.speed = this.rudiBaseSpeed
-      this._increaseSpeed(0)
+      this._increaseSpeed(5)
     }, seconds * 1000)
   }
 
   update () {
     if (!this.onPause) {
       this.players.map(player => {
-        player.checkCarnet()
-        // player.checkStun()
+        player.checkStatus()
         player.movePlayer()
         player.updateScore()
       })
 
-      this.game.physics.arcade.overlap(this.players, this.players, this._onPlayersCollide)
+      this.game.physics.arcade.collide(this.players, this.players, this._onPlayersCollide)
       this._updateRudi()
     }
   }
@@ -97,7 +90,7 @@ export default class extends Phaser.State {
   _onPlayersCollide (player1, player2) {
     player1.bouncePlayer()
     player2.bouncePlayer()
-
+    
     if (player1.hasCarnet && !player2.collisionTimer.running) {
       player1.collisionTimer.start()
       player1.hasCarnet = false

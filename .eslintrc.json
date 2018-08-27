@@ -9,14 +9,12 @@
     "browser": true
   },
   "rules": {
-    "import/no-unresolved": [2],
-    "semi": "off",
-    "comma-dangle": "off"
+    "import/no-unresolved": [2]
   },
   "globals": {
     "phaser": true
   },
   "settings": {
-    "import/core-modules": [ "phaser", "pixi", "p2" ]
+    "import/core-modules": ["phaser", "pixi", "p2"]
   }
 }

@@ -6,6 +6,8 @@ export default class Menu extends Phaser.State {
     this.animDuration = animDuration
     this.animationEasing = Phaser.Easing.Circular.InOut
 
+    this._startGame = this._startGame.bind(this)
+
     this.decorationsData = [
       { key: 'deco1', percentx: 0.1, percenty: 0.44, scale: 0.5, random: true },
       { key: 'deco2', percentx: 0.8, percenty: 0.15, scale: 1, random: false },
@@ -30,6 +32,12 @@ export default class Menu extends Phaser.State {
       { image: this.decorationsItems[3], frames: 6 }
     ])
     this.timer.start()
+  }
+
+  update () {
+    if (this.game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+      this._startGame()
+    }
   }
 
   _createBg () {
